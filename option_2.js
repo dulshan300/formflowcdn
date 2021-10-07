@@ -171,6 +171,7 @@
                     key: PUB_KEY, // Replace with your public key
                     email: app.member.email,
                     currency: "GHS",
+                    channels:['card','bank','mobile_money'],
                     plan: app.selected_plan,
                     amount: app.form_data.pay_amount * 100,
                     ref: "CSMO" + Math.floor(Math.random() * 1000000000 + 1), // generates a pseudo-unique reference. Please replace with a reference you generated. Or remove the line entirely so our API will generate one for you
