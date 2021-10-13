@@ -193,6 +193,7 @@
                     email: this.form_data.email,
                     currency: "GHS",                    
                     // plan: app.selected_plan,
+                    channels:['card', 'bank','mobile_money'],
                     amount: this.form_data.pay_amount * 100,
                     ref: "CSMO" + Math.floor(Math.random() * 1000000000 + 1), // generates a pseudo-unique reference. Please replace with a reference you generated. Or remove the line entirely so our API will generate one for you
                     // label: "Optional string that replaces customer email"
