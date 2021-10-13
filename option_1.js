@@ -191,8 +191,7 @@
                 let handler = PaystackPop.setup({
                     key: PUB_KEY, // Replace with your public key
                     email: this.form_data.email,
-                    currency: "GHS",
-                    channels:['card','bank','mobile_money'],
+                    currency: "GHS",                    
                     plan: app.selected_plan,
                     amount: this.form_data.pay_amount * 100,
                     ref: "CSMO" + Math.floor(Math.random() * 1000000000 + 1), // generates a pseudo-unique reference. Please replace with a reference you generated. Or remove the line entirely so our API will generate one for you
