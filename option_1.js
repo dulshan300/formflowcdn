@@ -1,10 +1,9 @@
 (function () {
-    
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
     firebase
         .auth()
-        .signInWithEmailAndPassword(_femail,_fpass)
+        .signInWithEmailAndPassword(_femail, _fpass)
         .then((userCredential) => {
             var user = userCredential.user;
             window.user = user;
@@ -15,6 +14,8 @@
         });
     var db = firebase.firestore();
     var persons = db.collection("persons");
+    var storage = firebase.storage();
+    var storageRef = storage.ref();
     var settings = db.collection("settings");
 
     var app = new Vue({
@@ -29,6 +30,7 @@
             selected_plan: null,
             selected_product_name: null,
             settings: {},
+            photo: null,
             form_data: {
                 beneficiary: null,
                 beneficiary_sponsor: {},
@@ -119,6 +121,24 @@
                 console.log("say awasome");
                 return true;
             },
+            file_upload: function (e) {
+                files = e.target.files;
+                console.log(files[0]);
+                if (files[0].size < 2000000) {
+                    this.photo = {};
+                    this.photo.file = files[0];
+                    this.photo.ext = files[0].type.split("/")[1];
+                    this.photo.name =
+                        this.form_data.mb_number +
+                        "." +
+                        files[0].type.split("/")[1];
+
+                    console.log(this.photo.name);
+                } else {
+                    alert("Maximum size is 2mb");
+                }
+            },
+
             validate_bdetails_1: function () {
                 var valid = true;
                 if (this.form_data.beneficiary == "Family_or_Friends") {
@@ -163,6 +183,13 @@
                     }
                 );
 
+                if (this.photo == null) {
+                    valid = false;
+                    $(".custom-file").addClass("error");
+                } else {
+                    $(".custom-file").removeClass("error");
+                }
+
                 if (app.form_data.gender == null) {
                     $(".custom-radio").addClass("error");
                     valid = false;
@@ -187,13 +214,21 @@
                 }
                 return "";
             },
+            
             make_payment: async function () {
+
+                // upload photo first
+
+                var userRef = storageRef.child("support/" + app.photo.name);
+                await userRef.put(app.photo.file).then(async (snapshot) => {});
+
+
                 let handler = PaystackPop.setup({
                     key: PUB_KEY, // Replace with your public key
                     email: this.form_data.email,
-                    currency: "GHS",                    
-                    // plan: app.selected_plan, 
-                    channels:['card', 'bank','mobile_money'],
+                    currency: "GHS",
+                    // plan: app.selected_plan,
+                    channels: ["card", "bank", "mobile_money"],
                     amount: this.form_data.pay_amount * 100,
                     ref: "CSMO" + Math.floor(Math.random() * 1000000000 + 1), // generates a pseudo-unique reference. Please replace with a reference you generated. Or remove the line entirely so our API will generate one for you
                     // label: "Optional string that replaces customer email"
@@ -236,14 +271,14 @@
                             id_number: app.form_data.id_number,
                             payment_ref: app.form_data.payment_ref,
                             product_code: app.selected_product,
+                            photo: app.photo.name,
                         };
 
                         console.log(xdata.id);
 
                         (async function () {
                             await persons.doc(xdata.id).set(xdata);
-                            await settings.doc("cosmo").set(app.settings);
-                            console.log("Saved");
+                            await settings.doc("cosmo").set(app.settings);                            
                         })();
                     },
                 });
@@ -355,6 +390,7 @@
         },
     });
     // Panel Component
+    // Panel Component
     function panel() {
         // Panel Component
         var panel = {
@@ -369,7 +405,9 @@
             <hr>
             <div class="d-flex justify-content-center">
                 <button type="button" class="btn btn-secondary mr-1" v-if="isBack" v-on:click="back">Back</button>
-                <button :disabled="dnext" type="button" class="btn btn-primary" v-on:click="next">{{next_text}}</button>
+                <button :disabled="dnext" type="button" class="btn btn-primary" v-on:click="next"> 
+                <span v-if="processing" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                {{next_text}}</button>
             </div>
         </div>      
       </div>`,
@@ -378,10 +416,12 @@
                     isBack: this.step == 1 ? false : true,
                     next_text: this.bnext ? this.bnext : "Next",
                     dnext: this.dnext ? this.dnext : false,
+                    processing: false,
                 };
             },
             methods: {
                 next: async function () {
+                    this.processing = true;
                     if (this.action) {
                         if (await this.$parent[this.action]()) {
                             if (
@@ -402,6 +442,7 @@
                             this.$parent.current_step++;
                         }
                     }
+                    this.processing = false;
                     console.log(this.$parent.total_step);
                 },
                 back: function () {

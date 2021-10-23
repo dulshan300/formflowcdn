@@ -1,4 +1,4 @@
-(function () {   
+(function () {
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
     firebase
