@@ -1,4 +1,4 @@
-(function () {    
+(function () {
     // firebase setup
     var app = new Vue({
         el: "#app",
@@ -7,7 +7,9 @@
             current_step: 1, // do not remove
             total_step: 0, // do not remove
             // Add your code below here
-            form_data: {},            
+            form_data: { delivery: delivery_options[0] },
+
+            delivery_options: delivery_options,
         },
         components: {
             Panel: panel(), // do not remove
@@ -29,6 +31,32 @@
             say: function () {
                 console.log("say awasome");
                 return true;
+            },
+
+            make_payment: async function (code = null) {
+                let handler = PaystackPop.setup({
+                    key: PUB_KEY, // Replace with your public key
+                    email: app.form_data.email,
+                    currency: "GHS",
+                    // plan: app.selected_plan,
+                    amount: app.form_data.delivery.value * 100,
+                    ref: "CSMO" + Math.floor(Math.random() * 1000000000 + 1), // generates a pseudo-unique reference. Please replace with a reference you generated. Or remove the line entirely so our API will generate one for you
+                    // label: "Optional string that replaces customer email"
+                    onClose: function () {
+                        return false;
+                    },
+                    callback: function (response) {
+                        let message =
+                            "Payment complete! Reference: " +
+                            response.reference;
+                        app.form_data.payment_ref = response.reference;
+                        app.current_step = 2;
+                        // send mails
+                        app.mail();
+                        return true;
+                    },
+                });
+                handler.openIframe();
             },
 
             validate: function () {
@@ -68,8 +96,8 @@
                     mb_number: this.form_data.membership_no,
                     phone_number: this.form_data.phone_number,
                     email: this.form_data.email,
-                    address: this.form_data.address,
-                    delivery: this.form_data.delivery,
+                    message: this.form_data.message,
+                    delivery: this.form_data.delivery.name,
                 };
                 // console.log(template(email_body_data));
                 var form = new FormData();
