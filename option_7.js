@@ -1,5 +1,26 @@
 (function () {
     // firebase setup
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    firebase
+        .auth()
+        .signInWithEmailAndPassword(_femail, _fpass)
+        .then((userCredential) => {
+            var user = userCredential.user;
+            window.user = user;
+            console.log(user);
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+    var db = firebase.firestore();
+    var persons = db.collection("persons");
+    var storage = firebase.storage();
+    var storageRef = storage.ref();
+    var settings = db.collection("settings");
+
+
+
     var app = new Vue({
         el: "#app",
         data: {
@@ -8,8 +29,9 @@
             total_step: 0, // do not remove
             // Add your code below here
             form_data: { delivery: delivery_options[0] },
-
             delivery_options: delivery_options,
+            photo: null,
+            photo_url:""
         },
         components: {
             Panel: panel(), // do not remove
@@ -33,7 +55,38 @@
                 return true;
             },
 
+            file_upload: function (e) {
+                files = e.target.files;
+                console.log(files[0]);
+                if (files[0].size < 2000000) {
+                    this.photo = {};
+                    this.photo.file = files[0];
+                    this.photo.ext = files[0].type.split("/")[1];
+                    this.photo.name =
+                        this.form_data.mb_number +
+                        "." +
+                        files[0].type.split("/")[1];
+
+                    console.log(this.photo.name);
+                } else {
+                    alert("Maximum size is 2mb");
+                }
+            },
+
             make_payment: async function (code = null) {
+
+                var userRef = storageRef.child("support/" + app.photo.name);
+                await userRef.put(app.photo.file).then(async (snapshot) => {
+                    let full_path = snapshot.metadata.fullPath;
+                    await storageRef
+                    .child(full_path)
+                    .getDownloadURL()
+                    .then((url) => {           
+
+                        app.photo_url = url;
+                    });
+                });
+
                 let handler = PaystackPop.setup({
                     key: PUB_KEY, // Replace with your public key
                     email: app.form_data.email,
@@ -98,6 +151,7 @@
                     email: this.form_data.email,
                     message: this.form_data.message,
                     delivery: this.form_data.delivery.name,
+                    photo_url: this.photo_url,
                 };
                 // console.log(template(email_body_data));
                 var form = new FormData();
@@ -142,7 +196,9 @@
             <hr>
             <div class="d-flex justify-content-center">
                 <button type="button" class="btn btn-secondary mr-1" v-if="isBack" v-on:click="back">Back</button>
-                <button :disabled="dnext" type="button" class="btn btn-primary" v-on:click="next">{{next_text}}</button>
+                <button :disabled="dnext" type="button" class="btn btn-primary" v-on:click="next"> 
+                <span v-if="processing" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                {{next_text}}</button>
             </div>
         </div>      
       </div>`,
@@ -151,10 +207,12 @@
                     isBack: this.step == 1 ? false : true,
                     next_text: this.bnext ? this.bnext : "Next",
                     dnext: this.dnext ? this.dnext : false,
+                    processing: false,
                 };
             },
             methods: {
                 next: async function () {
+                    this.processing = true;
                     if (this.action) {
                         if (await this.$parent[this.action]()) {
                             if (
@@ -175,6 +233,7 @@
                             this.$parent.current_step++;
                         }
                     }
+                    this.processing = false;
                     console.log(this.$parent.total_step);
                 },
                 back: function () {
