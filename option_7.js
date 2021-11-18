@@ -151,6 +151,7 @@
                     email: this.form_data.email,
                     message: this.form_data.message,
                     delivery: this.form_data.delivery.name,
+                    address: this.form_data.address,
                     photo_url: this.photo_url,
                 };
                 // console.log(template(email_body_data));
