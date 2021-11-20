@@ -14,7 +14,7 @@
             console.log(error);
         });
     var db = firebase.firestore();
-    var persons = db.collection("applications");
+    var applications = db.collection("applications");
     var storage = firebase.storage();
     var storageRef = storage.ref();
 
@@ -24,24 +24,24 @@
             file_name: "",
             current_step: 1, // do not remove
             total_step: 0, // do not remove
-            // Add your code below here 
+            // Add your code below here
             work_unite: "",
             work_unites: work_unites,
             file: null,
-            file_url: "",
             name: "",
             phone_number: "",
             email: "",
-            address:"",
-            emp_type:[]
+            address: "",
+            emp_type:"",
+            application: null,
         },
         components: {
             Panel: panel(), // do not remove
         },
         watch: {
-            emp_type:function(){
+            emp_type: function () {
                 console.log(this.emp_type);
-            }
+            },
         },
         methods: {
             // step_finish will execute as the last step next function
@@ -69,24 +69,57 @@
                     this.file.file = files[0];
                     this.file.ext = files[0].type.split("/")[1];
                     this.file.name =
-                        this.name +Date.now()+
+                        this.name +
+                        Date.now() +
                         "." +
                         files[0].type.split("/")[1];
-                   
+
                     this.file_name = files[0].name;
                 } else {
                     alert("Maximum size is 5mb");
                 }
             },
 
-            send_application: function () {
+            send_application: async function () {
                 if (this.validate()) {
-                    
-                }else{
+                    // save data to firebase
+                    let id = "JA-" + Date.now();
+                    let data = {
+                        id: id,
+                        name: this.name,
+                        phone: this.phone_number,
+                        email: this.email,
+                        address: this.address,
+                        employment_type: this.emp_type,
+                        work_unite: this.work_unite,
+                    };
+
+                    await applications.doc(id).set(data);
+                    this.application = data;
+
+                    // upload cv file & get cv file download url
+
+                    var userRef = storageRef.child(
+                        "cv/" + id + "." + app.file.ext
+                    );
+                    await userRef.put(app.file.file).then(async (snapshot) => {
+                        let full_path = snapshot.metadata.fullPath;
+                        await storageRef
+                            .child(full_path)
+                            .getDownloadURL()
+                            .then((url) => {
+                                app.application.file_url = url;
+                            });
+                    });
+                    // send mail
+                    this.mail();
+
+                    // send thank mail
+                } else {
                     return 0;
                 }
             },
-          
+
             validate: function () {
                 var valid = true;
                 $("#et").removeClass("error_text");
@@ -94,7 +127,7 @@
                 $(
                     "#msg input[required],#msg select[required], #msg textarea[required]"
                 ).each(function () {
-                    $(this).removeClass("error");                    
+                    $(this).removeClass("error");
                     if ($(this).val() == "" || $(this).val() == null) {
                         $(this).addClass("error");
                         valid = false;
@@ -109,33 +142,32 @@
                     }
 
                     if (this.type == "file") {
-                        if (!app.file) {                            
+                        if (!app.file) {
                             $("#lblcv").addClass("error_text");
                             valid = false;
                         }
                     }
 
-                    if(app.emp_type.length == 0){
+                    if (app.emp_type == "") {
                         $("#et").addClass("error_text");
                     }
                 });
                 return valid;
-            },           
+            },
             mail: async function () {
                 var temp = $("#email_body").html();
                 var template = Handlebars.compile(temp);
                 var email_body_data = {
-                    name: this.form_data.name,
-                    mb_number: this.form_data.membership_no,
-                    phone_number: this.form_data.phone_number,
-                    email: this.form_data.email,
-                    message: this.form_data.message,
-                    delivery: this.form_data.delivery.name,
-                    address: this.form_data.address,
-                    file_url: this.file_url,
-                   
+                    id: this.application.id,
+                    name: this.application.name,
+                    email: this.application.email,
+                    phone_number: this.application.phone,
+                    address: this.application.address,
+                    employment_type: this.application.employment_type,
+                    work_unite: this.application.work_unite,
+                    file_url: this.application.file_url,
                 };
-                // console.log(template(email_body_data));
+               
                 var form = new FormData();
 
                 form.append("_api_key", EMAIL_API.public_key);
@@ -157,7 +189,7 @@
                     crossDomain: true,
                     // dataType: "json",
                     success: function (data) {
-                        console.log(data);
+                        // console.log(data);
                     },
                 });
             },
@@ -215,7 +247,7 @@
                             this.$parent.current_step++;
                         }
                     }
-                    this.processing = false;                    
+                    this.processing = false;
                 },
                 back: function () {
                     this.$parent.current_step--;
