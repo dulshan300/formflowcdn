@@ -21,10 +21,10 @@
     var app = new Vue({
         el: "#app",
         data: {
-            file_name: "",
             current_step: 1, // do not remove
             total_step: 0, // do not remove
             // Add your code below here
+            file_name: "",
             work_unite: "",
             work_unites: work_unites,
             file: null,
@@ -32,7 +32,7 @@
             phone_number: "",
             email: "",
             address: "",
-            emp_type:"",
+            emp_type: "",
             application: null,
         },
         components: {
@@ -114,6 +114,18 @@
                     // send mail
                     this.mail();
                     // send thank mail
+
+                    this.file_name = "";
+                    this.work_unite = "";
+                    this.work_unites = work_unites;
+                    this.file = null;
+                    this.name = "";
+                    this.phone_number = "";
+                    this.email = "";
+                    this.address = "";
+                    this.emp_type = "";
+                    this.application = null;
+
                     return true;
                 } else {
                     return 0;
@@ -167,7 +179,7 @@
                     work_unite: this.application.work_unite,
                     file_url: this.application.file_url,
                 };
-               
+
                 var form = new FormData();
 
                 form.append("_api_key", EMAIL_API.public_key);
