@@ -113,8 +113,8 @@
                     });
                     // send mail
                     this.mail();
-
                     // send thank mail
+                    return true;
                 } else {
                     return 0;
                 }
