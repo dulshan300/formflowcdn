@@ -1,3 +1,9 @@
+.container {
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
 .card {
   font-family: Arial, Helvetica, sans-serif;
 }
