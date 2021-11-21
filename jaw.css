@@ -1,0 +1,22 @@
+.card {
+  font-family: Arial, Helvetica, sans-serif;
+}
+.card * {
+  margin: 0;
+  padding: 0;
+}
+.card h5 {
+  font-size: 20px;
+  padding: 10px;
+}
+.card .text-center {
+  text-align: center;
+}
+.card .card-body {
+  padding: 10px;
+}
+.card .card-body .content {
+  padding: 10px 0;
+}
+
+/*# sourceMappingURL=jaw.css.map */

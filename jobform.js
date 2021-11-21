@@ -112,7 +112,7 @@
                             });
                     });
                     // send mail
-                    this.mail();
+                    await this.mail();
                     // send thank mail
 
                     this.file_name = "";
@@ -218,7 +218,7 @@
                 <h5 class="text-center">{{title}}</h5>
                 <hr>
             </div>
-            <div><slot></slot></div>
+            <div class="content"><slot></slot></div>
             <hr>
             <div class="d-flex justify-content-center">
                 <button type="button" class="btn btn-secondary mr-1" v-if="isBack" v-on:click="back">Back</button>
