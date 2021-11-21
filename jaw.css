@@ -4,6 +4,10 @@
 .card * {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
+}
+.card .error_text {
+  color: red;
 }
 .card h5 {
   font-size: 20px;
@@ -17,6 +21,126 @@
 }
 .card .card-body .content {
   padding: 10px 0;
+}
+.card .form-group {
+  padding: 5px 0;
+  margin-bottom: 5px;
+}
+.card .form-group > label {
+  display: block;
+}
+.card .form-group input[type=text],
+.card .form-group input[type=email],
+.card .form-group select {
+  width: 100%;
+  height: 35px;
+  border: 1px solid rgba(128, 128, 128, 0.5);
+  background-color: transparent;
+  border-radius: 4px;
+  margin-top: 5px;
+  padding: 0 10px;
+  font-size: 14px;
+}
+.card .form-group input[type=text]:focus,
+.card .form-group input[type=email]:focus,
+.card .form-group select:focus {
+  outline-color: pink;
+}
+.card .form-group input[type=text].error,
+.card .form-group input[type=email].error,
+.card .form-group select.error {
+  border: 1px solid red;
+}
+.card .form-group textarea {
+  width: 100%;
+  border: 1px solid rgba(128, 128, 128, 0.5);
+  border-radius: 4px;
+  margin-top: 5px;
+  padding: 10px 10px;
+}
+.card .form-group textarea:focus {
+  outline-color: pink;
+}
+.card .form-group textarea.error {
+  border: 1px solid red;
+}
+.card .form-group #et {
+  display: flex;
+  margin-top: 10px;
+}
+.card .form-group #et .custom-control {
+  flex: 1;
+}
+.card .form-group .custom-file input[type=file] {
+  display: none;
+}
+.card .form-group .custom-file label {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 35px;
+  border: 1px solid rgba(128, 128, 128, 0.5);
+  border-radius: 4px;
+  margin-top: 5px;
+  position: relative;
+  padding: 0 10px;
+  overflow: hidden;
+}
+.card .form-group .custom-file label:after {
+  content: "Browse";
+  width: 100px;
+  height: 35px;
+  background: rgba(128, 128, 128, 0.5);
+  position: absolute;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10px;
+}
+.card .btn {
+  height: 35px;
+  padding: 0 15px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-radius: 4px;
+  margin: 0 5px;
+}
+.card .btn.btn-primary {
+  color: #fff;
+  background-color: #007bff;
+  border-color: #007bff;
+}
+.card .btn.btn-primary:hover {
+  background-color: #006fe6;
+}
+.card .btn.btn-secondary {
+  color: #fff;
+  background-color: #6c757d;
+  border-color: #6c757d;
+}
+.card .btn.btn-secondary:hover {
+  background-color: #60686f;
+}
+.card .btn.btn-success:hover {
+  color: #fff;
+  background-color: #218838;
+  border-color: #1e7e34;
+}
+.card .btn.btn-success:hover:hover {
+  background-color: #1c7330;
+}
+.card hr {
+  border: none;
+  border-bottom: 1px solid rgba(128, 128, 128, 0.2);
+  margin: 5px 0;
+}
+.card .d-flex {
+  display: flex;
+}
+.card .d-flex.justify-content-center {
+  justify-content: center;
 }
 
 /*# sourceMappingURL=jaw.css.map */
