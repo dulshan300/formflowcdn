@@ -70,11 +70,11 @@
 .card .form-group textarea.error {
   border: 1px solid red;
 }
-.card .form-group #et {
+.card .form-group #et,.card .form-group #dd {
   display: flex;
   margin-top: 10px;
 }
-.card .form-group #et .custom-control {
+.card .form-group #et .custom-control,.card .form-group #dd .custom-control {
   flex: 1;
 }
 .card .form-group .custom-file input[type=file] {
