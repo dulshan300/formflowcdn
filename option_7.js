@@ -31,12 +31,18 @@
             form_data: { delivery: delivery_options[0] },
             delivery_options: delivery_options,
             photo: null,
-            photo_url:""
+            photo_url:"",
+            phone_number: "",
         },
         components: {
             Panel: panel(), // do not remove
         },
-        watch: {},
+        watch: {
+            'form_data.phone_number':function(value) {
+                value = value.replaceAll(/\+0/gi,'');
+                this.form_data.phone_number =  "+"+value.replaceAll(/\D/gi,'');
+            },
+        },
         methods: {
             // step_finish will execute as the last step next function
             // do not remove

@@ -38,6 +38,8 @@
                 membership_no: null,
                 start_date: new Date(),
                 expires_date: null,
+                phone_number:"",
+
             },
             member: {
                 id: null,
@@ -53,6 +55,10 @@
             Panel: panel(), // do not remove
         },
         watch: {
+            'form_data.phone_number':function(value) {
+                value = value.replaceAll(/\+0/gi,'');
+                this.form_data.phone_number =  "+"+value.replaceAll(/\D/gi,'');
+            },
             selected_product: function (d) {
                 if (d) {
                     var pd = d.split("-");

@@ -45,6 +45,7 @@
                     -4
                 ),
                 mb_number: null,
+                phone_number: "",
             },
         },
         components: {
@@ -76,6 +77,10 @@
             }
         },
         watch: {
+            'form_data.phone_number':function(value) {
+                value = value.replaceAll(/\+0/gi,'');
+                this.form_data.phone_number =  "+"+value.replaceAll(/\D/gi,'');
+            },
             selected_product: async function (d) {
                 var pd = d.split("-");
                 this.form_data.pay_amount = parseFloat(pd[2]);
