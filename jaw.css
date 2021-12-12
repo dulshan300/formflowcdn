@@ -28,6 +28,16 @@
 .card .card-body .content {
   padding: 10px 0;
 }
+.card .cd_row {
+  display: flex;
+}
+.card .cd_row .form-group {
+  flex: 1;
+  margin-right: 5px;
+}
+.card .cd_row .form-group:last-child {
+  margin-right: 0;
+}
 .card .form-group {
   padding: 5px 0;
   margin-bottom: 5px;
@@ -37,6 +47,7 @@
 }
 .card .form-group input[type=text],
 .card .form-group input[type=email],
+.card .form-group input[type=date],
 .card .form-group select {
   width: 100%;
   height: 35px;
@@ -49,11 +60,13 @@
 }
 .card .form-group input[type=text]:focus,
 .card .form-group input[type=email]:focus,
+.card .form-group input[type=date]:focus,
 .card .form-group select:focus {
   outline-color: pink;
 }
 .card .form-group input[type=text].error,
 .card .form-group input[type=email].error,
+.card .form-group input[type=date].error,
 .card .form-group select.error {
   border: 1px solid red;
 }
@@ -70,11 +83,11 @@
 .card .form-group textarea.error {
   border: 1px solid red;
 }
-.card .form-group #et {
+.card .form-group #et, .card .form-group #et2 {
   display: flex;
   margin-top: 10px;
 }
-.card .form-group #et .custom-control {
+.card .form-group #et .custom-control, .card .form-group #et2 .custom-control {
   flex: 1;
 }
 .card .form-group .custom-file input[type=file] {
