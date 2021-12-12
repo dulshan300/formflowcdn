@@ -14,33 +14,34 @@
             console.log(error);
         });
     var db = firebase.firestore();
-    var persons = db.collection("persons");
+    var applications = db.collection("applications");
     var storage = firebase.storage();
     var storageRef = storage.ref();
-    var settings = db.collection("settings");
-
-
 
     var app = new Vue({
         el: "#app",
         data: {
-            msg: "Hello Vue Wizard",
             current_step: 1, // do not remove
             total_step: 0, // do not remove
             // Add your code below here
-            form_data: { delivery: delivery_options[0] },
-            delivery_options: delivery_options,
-            photo: null,
-            photo_url:"",
+            file_name: "",
+            identification: "",
+            identifications: identifications,
+            file: null,
+            name: "",
             phone_number: "",
+            email: "",
+            address: "",
+            emp_type: "",
+            desire_device: "",
+            application: null,
         },
         components: {
             Panel: panel(), // do not remove
         },
         watch: {
-            'form_data.phone_number':function(value) {
-                value = value.replaceAll(/\+0/gi,'');
-                this.form_data.phone_number =  "+"+value.replaceAll(/\D/gi,'');
+            emp_type: function () {
+                console.log(this.emp_type);
             },
         },
         methods: {
@@ -64,62 +65,85 @@
             file_upload: function (e) {
                 files = e.target.files;
                 console.log(files[0]);
-                if (files[0].size < 2000000) {
-                    this.photo = {};
-                    this.photo.file = files[0];
-                    this.photo.ext = files[0].type.split("/")[1];
-                    this.photo.name =
-                        this.form_data.mb_number +
+                if (files[0].size < 5200000) {
+                    this.file = {};
+                    this.file.file = files[0];
+                    this.file.ext = files[0].type.split("/")[1];
+                    this.file.name =
+                        this.name +
+                        Date.now() +
                         "." +
                         files[0].type.split("/")[1];
 
-                    console.log(this.photo.name);
+                    this.file_name = files[0].name;
                 } else {
-                    alert("Maximum size is 2mb");
+                    alert("Maximum size is 5mb");
                 }
             },
 
-            make_payment: async function (code = null) {
+            send_application: async function () {
+                if (this.validate()) {
+                    // save data to firebase
+                    let id = "JA-" + Date.now();
+                    let data = {
+                        id: id,
+                        name: this.name,
+                        phone: this.phone_number,
+                        email: this.email,
+                        address: this.address,
+                        employment_type: this.emp_type,
+                        desire_device: this.desire_device,
+                        identification: this.identification,
+                    };
 
-                var userRef = storageRef.child("support/" + app.photo.name);
-                await userRef.put(app.photo.file).then(async (snapshot) => {
-                    let full_path = snapshot.metadata.fullPath;
-                    await storageRef
-                    .child(full_path)
-                    .getDownloadURL()
-                    .then((url) => {           
+                    await applications.doc(id).set(data);
+                    this.application = data;
 
-                        app.photo_url = url;
+                    // upload cv file & get cv file download url
+
+                    var userRef = storageRef.child(
+                        "cv/" + id + "." + app.file.ext
+                    );
+                    await userRef.put(app.file.file).then(async (snapshot) => {
+                        let full_path = snapshot.metadata.fullPath;
+                        await storageRef
+                            .child(full_path)
+                            .getDownloadURL()
+                            .then((url) => {
+                                app.application.file_url = url;
+                            });
                     });
-                });
+                    // send mail
+                    await this.mail();
+                    // send thank mail
 
-                let handler = PaystackPop.setup({
-                    key: PUB_KEY, // Replace with your public key
-                    email: app.form_data.email,
-                    currency: "GHS",
-                    // plan: app.selected_plan,
-                    amount: app.form_data.delivery.value * 100,
-                    ref: "CSMO" + Math.floor(Math.random() * 1000000000 + 1), // generates a pseudo-unique reference. Please replace with a reference you generated. Or remove the line entirely so our API will generate one for you
-                    // label: "Optional string that replaces customer email"
-                    onClose: function () {
-                        return false;
-                    },
-                    callback: function (response) {
-                        let message =
-                            "Payment complete! Reference: " +
-                            response.reference;
-                        app.form_data.payment_ref = response.reference;
-                        app.current_step = 2;
-                        // send mails
-                        app.mail();
-                        return true;
-                    },
-                });
-                handler.openIframe();
+                    this.file_name = "";
+                    this.work_unite = "";
+                    this.identification = "";
+                    this.file = null;
+                    this.name = "";
+                    this.phone_number = "";
+                    this.email = "";
+                    this.address = "";
+                    this.emp_type = "";
+                    this.desire_device = "";
+                    this.application = null;
+
+                    return true;
+                } else {
+                    return 0;
+                }
+            },
+
+            goToHome: () => {
+                window.location.replace(BASE_URL)
             },
 
             validate: function () {
                 var valid = true;
+                $("#et").removeClass("error_text");
+                $("#dd").removeClass("error_text");
+                $("#lblcv").removeClass("error_text");
                 $(
                     "#msg input[required],#msg select[required], #msg textarea[required]"
                 ).each(function () {
@@ -136,31 +160,39 @@
                             valid = false;
                         }
                     }
+
+                    if (this.type == "file") {
+                        if (!app.file) {
+                            $("#lblcv").addClass("error_text");
+                            valid = false;
+                        }
+                    }
+
+                    if (app.emp_type == "") {
+                        $("#et").addClass("error_text");
+                    }
+
+                    if (app.desire_device == "") {
+                        $('#dd').addClass('error_text');
+                    }
                 });
                 return valid;
-            },
-            msg_submit: async function () {
-                if (app.validate()) {
-                    app.mail();
-                    return true;
-                } else {
-                    return false;
-                }
             },
             mail: async function () {
                 var temp = $("#email_body").html();
                 var template = Handlebars.compile(temp);
                 var email_body_data = {
-                    name: this.form_data.name,
-                    mb_number: this.form_data.membership_no,
-                    phone_number: this.form_data.phone_number,
-                    email: this.form_data.email,
-                    message: this.form_data.message,
-                    delivery: this.form_data.delivery.name,
-                    address: this.form_data.address,
-                    photo_url: this.photo_url,
+                    id: this.application.id,
+                    name: this.application.name,
+                    email: this.application.email,
+                    phone_number: this.application.phone,
+                    address: this.application.address,
+                    employment_type: this.application.employment_type,
+                    identification: this.application.identification,
+                    file_url: this.application.file_url,
+                    desire_device: this.application.desire_device,
                 };
-                // console.log(template(email_body_data));
+
                 var form = new FormData();
 
                 form.append("_api_key", EMAIL_API.public_key);
@@ -182,7 +214,7 @@
                     crossDomain: true,
                     // dataType: "json",
                     success: function (data) {
-                        console.log(data);
+                        // console.log(data);
                     },
                 });
             },
@@ -199,21 +231,20 @@
                 <h5 class="text-center">{{title}}</h5>
                 <hr>
             </div>
-            <div><slot></slot></div>
+            <div class="content"><slot></slot></div>
             <hr>
-            <div class="d-flex justify-content-center">
-                <button type="button" class="btn btn-secondary mr-1" v-if="isBack" v-on:click="back">Back</button>
-                <button :disabled="dnext" type="button" class="btn btn-primary" v-on:click="next"> 
+            <div class="d-flex justify-content-center">                
+                <button :disabled="$data._dnext" type="button" class="btn btn-primary" v-on:click="next"> 
                 <span v-if="processing" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                {{next_text}}</button>
+                {{$data._bnext}}</button>
             </div>
         </div>      
       </div>`,
             data: function () {
                 return {
                     isBack: this.step == 1 ? false : true,
-                    next_text: this.bnext ? this.bnext : "Next",
-                    dnext: this.dnext ? this.dnext : false,
+                    _bnext: this.bnext ? this.bnext : "Next",
+                    _dnext: this.dnext ? this.dnext : false,
                     processing: false,
                 };
             },
@@ -241,7 +272,6 @@
                         }
                     }
                     this.processing = false;
-                    console.log(this.$parent.total_step);
                 },
                 back: function () {
                     this.$parent.current_step--;

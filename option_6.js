@@ -7,12 +7,19 @@
             current_step: 1, // do not remove
             total_step: 0, // do not remove
             // Add your code below here
-            form_data: {},            
+            form_data: {
+                phone_number:""
+            },            
         },
         components: {
             Panel: panel(), // do not remove
         },
-        watch: {},
+        watch: {
+            'form_data.phone_number':function(value) {
+                value = value.replaceAll(/\+0/gi,'');
+                this.form_data.phone_number =  "+"+value.replaceAll(/\D/gi,'');
+            },
+        },
         methods: {
             // step_finish will execute as the last step next function
             // do not remove
