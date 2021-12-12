@@ -1,0 +1,187 @@
+.container-mx {
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.card {
+  font-family: Arial, Helvetica, sans-serif;
+}
+.card * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+.card .error_text {
+  color: red;
+}
+.card h5 {
+  font-size: 20px;
+  padding: 10px;
+}
+.card .text-center {
+  text-align: center;
+}
+.card .card-body {
+  padding: 10px;
+}
+.card .card-body .content {
+  padding: 10px 0;
+}
+.card .cd_row {
+  display: flex;
+}
+.card .cd_row .form-group {
+  flex: 1;
+  margin-right: 5px;
+}
+.card .cd_row .form-group:last-child {
+  margin-right: 0;
+}
+.card .form-group {
+  padding: 5px 0;
+  margin-bottom: 5px;
+}
+.card .form-group > label {
+  display: block;
+}
+.card .form-group input[type=text],
+.card .form-group input[type=email],
+.card .form-group input[type=date],
+.card .form-group select {
+  width: 100%;
+  height: 35px;
+  border: 1px solid rgba(128, 128, 128, 0.5);
+  background-color: transparent;
+  border-radius: 4px;
+  margin-top: 5px;
+  padding: 0 10px;
+  font-size: 14px;
+}
+.card .form-group input[type=text]:focus,
+.card .form-group input[type=email]:focus,
+.card .form-group input[type=date]:focus,
+.card .form-group select:focus {
+  outline-color: pink;
+}
+.card .form-group input[type=text].error,
+.card .form-group input[type=email].error,
+.card .form-group input[type=date].error,
+.card .form-group select.error {
+  border: 1px solid red;
+}
+.card .form-group textarea {
+  width: 100%;
+  border: 1px solid rgba(128, 128, 128, 0.5);
+  border-radius: 4px;
+  margin-top: 5px;
+  padding: 10px 10px;
+}
+.card .form-group textarea:focus {
+  outline-color: pink;
+}
+.card .form-group textarea.error {
+  border: 1px solid red;
+}
+.card .form-group #et, .card .form-group #et2 {
+  display: flex;
+  margin-top: 10px;
+}
+.card .form-group #et .custom-control, .card .form-group #et2 .custom-control {
+  flex: 1;
+}
+.card .form-group .custom-file input[type=file] {
+  display: none;
+}
+.card .form-group .custom-file label {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 35px;
+  border: 1px solid rgba(128, 128, 128, 0.5);
+  border-radius: 4px;
+  margin-top: 5px;
+  position: relative;
+  padding: 0 10px;
+  overflow: hidden;
+}
+.card .form-group .custom-file label:after {
+  content: "Browse";
+  width: 100px;
+  height: 35px;
+  background: rgba(128, 128, 128, 0.5);
+  position: absolute;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10px;
+}
+.card .btn {
+  height: 40px;
+  padding: 0 30px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-radius: 4px;
+  margin: 0 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
+  font-weight: bold;
+}
+.card .btn.btn-primary {
+  color: #fff;
+  background-color: #680e0e;
+  border-color: #680e0e;
+}
+.card .btn.btn-primary:hover {
+  background-color: #520b0b;
+}
+.card .btn.btn-secondary {
+  color: #fff;
+  background-color: #6c757d;
+  border-color: #6c757d;
+}
+.card .btn.btn-secondary:hover {
+  background-color: #60686f;
+}
+.card .btn.btn-success:hover {
+  color: #fff;
+  background-color: #218838;
+  border-color: #1e7e34;
+}
+.card .btn.btn-success:hover:hover {
+  background-color: #1c7330;
+}
+.card hr {
+  border: none;
+  border-bottom: 1px solid rgba(128, 128, 128, 0.2);
+  margin: 5px 0;
+}
+.card .d-flex {
+  display: flex;
+}
+.card .d-flex.justify-content-center {
+  justify-content: center;
+}
+.card span.spinner-border {
+  width: 15px;
+  height: 15px;
+  border: 3px solid rgba(255, 255, 255, 0.5);
+  display: inline-block;
+  margin-right: 8px;
+  border-radius: 4px;
+  animation: spin 2s linear infinite;
+}
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/*# sourceMappingURL=jaw.css.map */
