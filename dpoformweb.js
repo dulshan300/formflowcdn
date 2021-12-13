@@ -40,7 +40,7 @@
             device_type: "",
             device_payment: {},
             application: null,
-            payment_ref:"",
+            payment_ref: "",
         },
         components: {
             Panel: panel(), // do not remove
@@ -79,64 +79,67 @@
                 return true;
             },
 
-            makePayment() {             
-
+            async makePayment() {
                 if (this.validate()) {
-                    // make payment
-                    let handler = PaystackPop.setup({
-                        key: PUB_KEY, // Replace with your public key
+                    let fdata = {
+                        id: this.id_number,
+                        first_name: this.first_name,
+                        last_name: this.last_name,
+                        phone_number: this.phone_number,
                         email: this.email,
-                        currency: "GHS",
-                        // plan: app.selected_plan,
-                        channels: ["card", "bank", "mobile_money"],
-                        amount: this.device_payment.value * 100,
-                        ref:
-                            "DPO" + Math.floor(Math.random() * 1000000000 + 1), // generates a pseudo-unique reference. Please replace with a reference you generated. Or remove the line entirely so our API will generate one for you
-                        // label: "Optional string that replaces customer email"
-                        onClose: function () {
-                            return false;
-                        },
-                        callback: function (response) {
-                            app.payment_ref = response.reference;
-                            app.current_step = 2;
+                        dob: this.dob,
+                        moi: this.moi,
+                        address: this.address,
+                        city: this.city,
+                        region: this.region,
+                        district: this.district,
+                        emp_type: this.emp_type,
+                        device_type: this.device_type,
+                        device_payment_title: this.device_payment.title,
+                        device_payment_value: this.device_payment.value,
+                        payment_ref: "",
+                    };
 
-                            const fdata = {
-                                id: app.id_number,
-                                first_name: app.first_name,
-                                last_name: app.last_name,
-                                phone_number: app.phone_number,
-                                email: app.email,
-                                dob: app.dob,
-                                moi: app.moi,
-                                address: app.address,
-                                city: app.city,
-                                region: app.region,
-                                district: app.district,
-                                emp_type: app.emp_type,
-                                device_type: app.device_type,
-                                device_payment_title: app.device_payment.title,
-                                device_payment_value: app.device_payment.value,
-                                payment_ref: response.reference,
-                            };
+                    if (this.device_payment.value > 0) {
+                        // make payment
+                        let handler = PaystackPop.setup({
+                            key: PUB_KEY, // Replace with your public key
+                            email: this.email,
+                            currency: "GHS",
+                            // plan: app.selected_plan,
+                            channels: ["card", "bank", "mobile_money"],
+                            amount: this.device_payment.value * 100,
+                            ref:
+                                "DPO" +
+                                Math.floor(Math.random() * 1000000000 + 1), // generates a pseudo-unique reference. Please replace with a reference you generated. Or remove the line entirely so our API will generate one for you
+                            // label: "Optional string that replaces customer email"
+                            onClose: function () {
+                                return false;
+                            },
+                            callback: function (response) {
+                                app.payment_ref = response.reference;
+                                app.current_step = 2;
+                                fdata.payment_ref = response.reference;
 
-                            (async function () {
-                                // save data
-                                await applications.doc(fdata.id).set(fdata);
-                                app.application = fdata;
-
-                                // send mails
-
-                                app.mail();
-                                
-                                
-                            })();
-                        },
-                    });
-                    handler.openIframe();
-                    
+                                (async function () {
+                                    // save data
+                                    await applications.doc(fdata.id).set(fdata);
+                                    app.application = fdata;
+                                    // send mails
+                                    app.mail();
+                                })();
+                            },
+                        });
+                        handler.openIframe();
+                    } else {
+                        // save data
+                        await applications.doc(fdata.id).set(fdata);
+                        this.application = fdata;
+                        // send mails
+                        this.mail();
+                        this.current_step = 2;
+                    }
                 }
-               
-           
             },
 
             goToHome: () => {
@@ -201,7 +204,7 @@
                     device_type: this.application.device_type,
                     device_payment_title: this.application.device_payment_title,
                     device_payment_value: this.application.device_payment_value,
-                    payment_ref: this.application.payment_ref
+                    payment_ref: this.application.payment_ref,
                 };
 
                 var form = new FormData();
