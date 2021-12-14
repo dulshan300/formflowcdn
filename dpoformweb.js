@@ -247,7 +247,8 @@
             </div>
             <div class="content"><slot></slot></div>
             <hr>
-            <div class="d-flex justify-content-center">                
+            <div class="d-flex justify-content-center">
+                <button type="button" class="btn btn-secondary mr-1" v-if="isBack" v-on:click="back">Back</button>                
                 <button :disabled="$data._dnext" type="button" class="btn btn-primary" v-on:click="next"> 
                 <span v-if="processing" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                 {{$data._bnext}}</button>
