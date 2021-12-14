@@ -139,7 +139,29 @@
                         this.mail();
                         this.current_step = 2;
                     }
+
+                    this.reset();
                 }
+            },
+
+            reset() {
+                first_name = "";
+                last_name = "";
+                phone_number = "";
+                email = "";
+                id_number = "";
+                dob = "";
+                moi = "";
+                address = "";
+                city = "";
+                region = "";
+                district = "";
+                districts = [];
+                emp_type = "";
+                device_type = "";
+                device_payment = {};
+                application = null;
+                payment_ref = "";
             },
 
             goToHome: () => {
@@ -294,7 +316,7 @@
             },
             created: function () {
                 this.$parent.total_step += 1;
-                console.log("Panel Created");
+                // console.log("Panel Created");
             },
         };
         return panel;
