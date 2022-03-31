@@ -15,6 +15,7 @@
         });
     var db = firebase.firestore();
     var persons = db.collection("persons");
+    var date_st = "";
     var app = new Vue({
         el: "#app",
         data: {
@@ -195,7 +196,7 @@
 
                         (async function () {
                             app.set_dates();
-
+                            app.member.date_first = app.member.date_first?app.member.date_first:app.member.date_start;
                             app.member.product = app.plan_type();
                             app.member.plan = app.plan_tenor();
                             app.member.product_code = app.selected_product;
