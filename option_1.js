@@ -277,7 +277,7 @@
                             payment_ref: app.form_data.payment_ref,
                             product_code: app.selected_product,
                             photo: app.photo.name,
-                            date_first: app.form_data.start_date.toISOString().split("T")[0],
+                            payed_date: app.form_data.start_date.toISOString().split("T")[0],
                         };
 
                         console.log(xdata.id);
