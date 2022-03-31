@@ -199,6 +199,7 @@
                             app.member.date_first = app.member.date_first?app.member.date_first:app.member.date_start;
                             app.member.product = app.plan_type();
                             app.member.plan = app.plan_tenor();
+                            app.member.payed_date: new Date(),
                             app.member.product_code = app.selected_product;
                             app.member.payment_ref = app.form_data.payment_ref;
                             await persons.doc(app.member.id).set(app.member);
